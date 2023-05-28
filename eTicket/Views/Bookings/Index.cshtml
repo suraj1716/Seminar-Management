@@ -1,0 +1,84 @@
+﻿@using eTicket.Models
+@model List<Booking>
+@{
+    ViewData["Title"] = "All Bookings";
+
+}  
+
+<div class="row">
+    <div class="col-md-8 offset-s">
+        <p>
+            <h4>List of all your Bookings</h4>
+
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Booking</th>
+                    <th style="padding-left:180px">Events</th>
+                    <th>Total</th>
+
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <th>User</th>
+                    }
+
+                </tr>
+
+            </thead>
+
+
+          
+
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td class="align-middle">@booking.Date</td>
+                        <td class="align-middle">@booking.Id</td>
+                        <td class="align-middle">
+                            <ul style="list-style-type:none">
+                                @foreach (var item in booking.BookingItems)
+                                {
+
+
+                                    <li>
+                                        <div class="alert alert-info" role="alert">
+                                            <a asp-controller="Events" asp-action="Details" asp-route-id="@item.EventId">
+                                                <span class="badge bg-success">@item.Amount</span> [@item.Price.ToString("c")] - @item.Event.Name
+                                            </a>
+                                        </div>
+
+                                    </li>
+                                }
+
+
+                            </ul>
+
+                        </td>
+
+                        <td class="align-middle">
+                            @booking.BookingItems.Select(m => m.Event.Price * m.Amount).Sum().ToString("c")
+
+                        </td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <td class="align-middle"> @booking.User.Email</td>
+
+                        }
+                    </tr>
+
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+</div>
